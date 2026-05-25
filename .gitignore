@@ -1,0 +1,16 @@
+# Python & UV
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.python-version
+uv.lock
+.venv
+
+# Variáveis de ambiente
+.env
+
+# Credenciais_aws
+credentials_aws
