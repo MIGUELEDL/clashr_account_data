@@ -14,3 +14,10 @@ uv.lock
 
 # Credenciais_aws
 credentials_aws
+
+# Notebooks
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+
+# Dados temporários do Jupyter
+*/.jupyter_cache/

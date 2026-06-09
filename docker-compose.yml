@@ -1,0 +1,45 @@
+services:
+  # Extração
+  extractor:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: tail -f /dev/null  # Fica aguardando comando manual
+
+  # Jupyter PySpark — para testar transformações localmente
+  jupyter:
+    image: eng-spark:3.5
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./notebooks:/opt/spark/work-dir
+      - ./transform:/workspace/transform
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: us-east-2
+    command: >
+      bash -c "pip install jupyter -q &&
+              jupyter notebook --ip=0.0.0.0 --allow-root --no-browser 
+              --NotebookApp.token='' --NotebookApp.password='' 
+              --notebook-dir=/workspace/notebooks"
+
+  # Airflow 
+  airflow:
+    image: spotify_data_pipeline-airflow:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+    command: tail -f /dev/null
+
+  # Streamlit
+  app:
+    image: spotify_data_pipeline-streamlit:latest
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./app.py:/app/app.py
+    command: tail -f /dev/null
