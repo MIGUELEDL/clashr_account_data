@@ -1,4 +1,5 @@
 import sys
+from datetime import datetime
 from awsglue.utils import getResolvedOptions
 from awsglue.context import GlueContext
 from awsglue.job import Job
@@ -22,9 +23,17 @@ TARGET_PATH = f"s3://{BUCKET}/processed/profile/"
 
 print(f"Lendo perfis do Glue Catalog: {DATABASE}.bronze_profile")
 
-# LEITURA — Bronze Layer (via Catalog) 
+# LEITURA — Bronze Layer
 
-df_raw = spark.sql(f"SELECT * FROM {DATABASE}.bronze_profile")
+# Lê a data de hoje
+#today = datetime.now().strftime("%Y-%m-%d")
+
+# Lê os dados
+#df_raw = spark.read.json(f"s3a://clashr-account-data-lake/raw/battles/*/{today}/data.json")
+
+df_raw = spark.read.option("multiLine", "true").json(
+    f"s3://clashr-account-data-lake/raw/profile/*/*/data.json"
+)
 
 print(f"Registros lidos da Bronze: {df_raw.count()}")
 

@@ -21,5 +21,3 @@ notebooks/.ipynb_checkpoints/
 
 # Dados temporários do Jupyter
 */.jupyter_cache/
-
-transform/glue_jobs/silver_to_gold.py
