@@ -63,6 +63,7 @@ services:
 
     depends_on:
       airflow-init:
+        condition: service_completed_successfully
 
     environment:
       AIRFLOW__CORE__EXECUTOR: SequentialExecutor
@@ -115,6 +116,7 @@ services:
 
     depends_on:
       airflow-init:
+        condition: service_completed_successfully
 
     environment:
       AIRFLOW__CORE__EXECUTOR: SequentialExecutor
