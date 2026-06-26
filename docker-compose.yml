@@ -1,50 +1,33 @@
 services:
-
-  # App Dashboard pra visualização dos dados
   streamlit:
     build:
-      context: .s
+      context: .
       dockerfile: Dockerfile.streamlit
-
     container_name: clash-streamlit
-
     ports:
       - "8501:8501"
-
     environment:
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-2}
-
       STREAMLIT_SERVER_PORT: 8501
       STREAMLIT_SERVER_ADDRESS: 0.0.0.0
       STREAMLIT_SERVER_HEADLESS: 'true'
-
       STREAMLIT_LOGGER_LEVEL: warning
       STREAMLIT_SERVER_FILE_WATCHER_TYPE: none
-
     volumes:
       - ./streamlit_app.py:/app/streamlit_app.py
       - ./athena_runner.py:/app/athena_runner.py
-      - ./athena_queries:/app/athena_queries
+      - ./queries:/app/queries
       - ./logs:/app/logs
-
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8501/_stcore/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-
-    mem_limit: 200m
-    cpus: 0.20
-
+    mem_limit: 400m
+    cpus: 0.50
     restart: unless-stopped
-
     networks:
       - clash-network
-
-volumes:
-  airflow_data:
 
 networks:
   clash-network:

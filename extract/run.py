@@ -1,10 +1,12 @@
 import os
 import sys
-from datetime import datetime
+from dotenv import load_dotenv
 from extract.client import ClashClient
 from extract.extractor import ClashExtractor
 from extract.loader import S3Loader
 from extract.utils import setup_logging
+
+load_dotenv()
 
 logger = setup_logging(__name__)
 
@@ -24,12 +26,10 @@ def main():
     extractor = ClashExtractor(client)
     loader = S3Loader(bucket_name=bucket, region=region)
 
-    # Extrai e salva perfil
     profile = extractor.get_player_profile(player_tag)
     profile_path = loader.save_profile(profile)
     logger.info(f"Perfil salvo em: {profile_path}")
 
-    # Extrai e salva batalhas
     battles = extractor.get_battle_log(player_tag)
     battles_path = loader.save_battles(battles, player_tag)
     logger.info(f"Batalhas salvas em: {battles_path}")
