@@ -1,0 +1,80 @@
+{
+  "sns_topic": {
+    "name": "clash-pipeline-alerts",
+    "description": "Tópico SNS para notificações de falhas e alertas do pipeline ELT",
+    "subscriptions": [
+      {
+        "protocol": "email",
+        "purpose": "Notificação imediata de falhas críticas"
+      }
+    ]
+  },
+  "alarms": [
+    {
+      "name": "clash-ec2-cpu-high",
+      "description": "Alerta quando a CPU da EC2 ultrapassa 80% por 10 minutos consecutivos",
+      "metric_name": "CPUUtilization",
+      "namespace": "AWS/EC2",
+      "statistic": "Average",
+      "period_seconds": 300,
+      "evaluation_periods": 2,
+      "threshold": 80,
+      "comparison_operator": "GreaterThanThreshold",
+      "dimensions": {
+        "InstanceId": "i-0c2ea81412f54844b"
+      },
+      "action": "sns:clash-pipeline-alerts",
+      "rationale": "CPU alta sustentada pode indicar loop infinito no script de extração, processo travado, ou degradação do pipeline antes que afete a disponibilidade do Streamlit."
+    },
+    {
+      "name": "clash-glue-battles-failed",
+      "description": "Alerta quando o Glue Job de transformação de batalhas falha",
+      "metric_name": "glue.driver.aggregate.numFailedTasks",
+      "namespace": "Glue",
+      "statistic": "Sum",
+      "period_seconds": 300,
+      "evaluation_periods": 1,
+      "threshold": 1,
+      "comparison_operator": "GreaterThanOrEqualToThreshold",
+      "dimensions": {
+        "JobName": "clashr_silver_battles"
+      },
+      "action": "sns:clash-pipeline-alerts",
+      "rationale": "Falha neste job significa que os dados de batalhas não chegam à Silver Layer, quebrando o pipeline downstream (Gold Layer e Streamlit)."
+    },
+    {
+      "name": "clash-glue-profile-failed",
+      "description": "Alerta quando o Glue Job de transformação de perfil falha",
+      "metric_name": "glue.driver.aggregate.numFailedTasks",
+      "namespace": "Glue",
+      "statistic": "Sum",
+      "period_seconds": 300,
+      "evaluation_periods": 1,
+      "threshold": 1,
+      "comparison_operator": "GreaterThanOrEqualToThreshold",
+      "dimensions": {
+        "JobName": "clashr_silver_profile"
+      },
+      "action": "sns:clash-pipeline-alerts",
+      "rationale": "Falha neste job impede a atualização do perfil do jogador, afetando a seção de evolução de troféus no dashboard."
+    }
+  ],
+  "log_groups": [
+    {
+      "name": "/aws/glue/jobs/clashr_silver_battles",
+      "purpose": "Logs de execução do job PySpark de transformação de batalhas"
+    },
+    {
+      "name": "/aws/glue/jobs/clashr_silver_profile",
+      "purpose": "Logs de execução do job PySpark de transformação de perfil"
+    },
+    {
+      "name": "/aws/lambda/clash-glue-trigger",
+      "purpose": "Logs da Lambda que orquestra Glue Jobs, MSCK REPAIR e Crawlers após cada extração"
+    },
+    {
+      "name": "athena-query-logs",
+      "purpose": "Histórico de queries executadas no Athena, usado para auditoria e controle de custo"
+    }
+  ]
+}

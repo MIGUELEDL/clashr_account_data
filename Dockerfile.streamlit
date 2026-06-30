@@ -13,6 +13,7 @@ RUN uv sync --frozen --no-dev --compile-bytecode
 
 COPY streamlit_app.py athena_runner.py ./
 COPY queries/ ./queries/
+COPY media/ ./media/
 
 EXPOSE 8501
 

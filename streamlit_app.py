@@ -10,7 +10,7 @@ import ast
 # ─── Configuração da página ───────────────────────────────────────────────────
 st.set_page_config(
     page_title="clashr_account_data",
-    page_icon="media/Clash_analytics.png",
+    page_icon="media/Clashr_analytcs.png",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -191,6 +191,10 @@ FROM streaks GROUP BY result ORDER BY MAX(streak_length) DESC
 """
 
 # ─── Header ───────────────────────────────────────────────────────────────────
+st.image(
+    "media/Clashr_analytcs_capa.png",
+    use_container_width=True
+)
 st.title("Clash Royale Account Analyses")
 st.caption("Pipeline ELT · AWS S3 · Glue · Athena · Streamlit")
 st.divider()
